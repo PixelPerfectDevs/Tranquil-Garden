@@ -1,19 +1,22 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+var apiKey = process.env.NEXT_PUBLIC_AUTH_APIKEY
+var authDomain = process.env.NEXT_PUBLIC_AUTH_AUTHDOMAIN
+var projectId = process.env.NEXT_PUBLIC_AUTH_PROJECTID
+var storageBucket = process.env.NEXT_PUBLIC_AUTH_STORAGEBUCKET
+var messagingSenderId = process.env.NEXT_PUBLIC_AUTH_MESSAGINGSENDERID
+var appId = process.env.NEXT_PUBLIC_AUTH_APPID
+var measurementId = process.env.NEXT_PUBLIC_AUTH_MEASUREMENTID
 const firebaseConfig = {
-  apiKey: "AIzaSyCyf-U_-OCMiLWegAdexkZ3LCSG5dGDOhY",
-  authDomain: "tranquil-garden-09.firebaseapp.com",
-  projectId: "tranquil-garden-09",
-  storageBucket: "tranquil-garden-09.appspot.com",
-  messagingSenderId: "478891741080",
-  appId: "1:478891741080:web:d5247ca212308f721525ed",
-  measurementId: "G-ZFLLSKNPHE"
+  apiKey: apiKey,
+  authDomain: authDomain,
+  projectId: projectId,
+  storageBucket: storageBucket,
+  messagingSenderId: messagingSenderId,
+  appId: appId,
+  measurementId: measurementId
 };
 
 let app
