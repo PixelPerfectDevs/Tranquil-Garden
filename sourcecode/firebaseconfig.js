@@ -1,7 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-
 var apiKey = process.env.NEXT_PUBLIC_AUTH_APIKEY
 var authDomain = process.env.NEXT_PUBLIC_AUTH_AUTHDOMAIN
 var projectId = process.env.NEXT_PUBLIC_AUTH_PROJECTID
@@ -22,6 +20,5 @@ const firebaseConfig = {
 let app
 // Initialize Firebase
 app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
 export default app
