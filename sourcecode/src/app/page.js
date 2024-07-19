@@ -1,10 +1,10 @@
 "use client";
 import Button from '@mui/material/Button';
-import { useRouter } from 'next/navigation';
+import SignInService from '@/Services/signIn';
 export default function Home() {
-  const router = useRouter();
-  const handlesignin = () => {
-    router.push('/signin');
+ 
+  const handlesignin = async() => {
+    SignInService()
   }
   return (
     <>
