@@ -64,7 +64,7 @@ export default class Chat extends React.Component {
                 <p>
                     <span>Hello Dheeraj Nani!</span>
                 </p>
-                <p> How are you doin' today?</p>
+                <p> How are you doin&apos; today?</p>
                 </div>{" "}
             </>
             ) : (
