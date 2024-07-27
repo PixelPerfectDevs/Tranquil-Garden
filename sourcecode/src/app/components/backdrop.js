@@ -6,8 +6,13 @@ import { useEffect } from 'react';
 import SignInService from "@/Services/signIn";
 export const Backdrop = () => {
   const router = useRouter();
-  const handlesignin = () => {
-    SignInService()
+  const handlesignin = async() => {
+    const newUser = await SignInService()
+    console.log("here ",newUser)
+    // console.log(SignInService())
+    if(newUser){
+      router.push("/signup")
+    }
   }
 
   const videoBackground = {
