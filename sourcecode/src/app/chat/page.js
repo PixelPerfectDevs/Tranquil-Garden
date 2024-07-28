@@ -7,6 +7,10 @@ import PersonIcon from '@mui/icons-material/Person';
 import Person3Icon from '@mui/icons-material/Person3';
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
 export default class Chat extends React.Component {
+  componentDidMount(){
+    console.log("chat page loaded");
+    document.body.style.backgroundColor = "white";
+  }
     constructor(props) {
         super(props);
         this.state = {

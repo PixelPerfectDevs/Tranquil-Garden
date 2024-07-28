@@ -7,7 +7,12 @@ import SignInService from "@/Services/signIn";
 export const Backdrop = () => {
   const router = useRouter();
   const handlesignin = () => {
-    SignInService()
+    SignInService().then(()=>{
+      router.push("/chat")
+    })
+    .catch((error)=>{
+      console.log(error)  
+    });
   }
 
   const videoBackground = {

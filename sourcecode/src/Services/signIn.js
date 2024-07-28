@@ -8,4 +8,5 @@ export default async function SignInService() {
     const credential = GoogleAuthProvider.credentialFromResult(result)
     const token = credential.accessToken
     console.log("user details",user,token) 
+    sessionStorage.setItem('userEmail', user.email);
 }
