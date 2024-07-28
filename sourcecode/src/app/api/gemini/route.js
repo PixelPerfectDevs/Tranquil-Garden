@@ -1,19 +1,36 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
 export async function  POST(request ) {
     const data = await request.json()
     var apiKey =  process.env.GEMINI_API
     const genAI =  new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({model:"gemini-1.5-flash"})
+    const model = genAI.getGenerativeModel({model:"gemini-1.5-flash",systemInstruction: "You are a friendly and polite therapist, talking to people."})
+    const generationConfig = {
+        temperature: 1,
+        topP: 0.95,
+        topK: 64,
+        maxOutputTokens: 8192,
+        responseMimeType: "text/plain",
+      };
+    const chatSession = model.startChat({
+    generationConfig,
+    history: [
+        {
+        role: "user",
+        parts: [
+            {text: "hey my name is dheeraj"},
+        ],
+        },
+        {
+        role: "model",
+        parts: [
+            {text: "Hey there!  It's nice to hear from you. What's on your mind today? 😊 \n"},
+        ],
+        },
+    ],
+    });
+    
     const prompt =data.message
-    const result = await model.generateContent([prompt])
-    const db = getFirestore()
-    const userEmail = sessionStorage.getItem('userEmail');
-    const userRef = doc(db, "History","dheerajgoud28@gmail.com" );
-    const userDoc = await getDoc(userRef);
-    console.log("userDoc",userDoc);
-    console.log("results",result.response.text())
-    // props.onResult(result.response.text())
+    const result = await chatSession.sendMessage([prompt])
     return new Response(result.response.text(),{status:200})
 }
 

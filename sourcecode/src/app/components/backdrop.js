@@ -4,11 +4,18 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import SignInService from "@/Services/signIn";
+import getUser from "@/Services/getuser";
 export const Backdrop = () => {
   const router = useRouter();
   const handlesignin = () => {
-    SignInService().then(()=>{
-      router.push("/chat")
+    SignInService().then(async(isNewUser)=>{
+      const userlocal = JSON.parse(localStorage.getItem("user"));
+      if(isNewUser) {
+        router.push("/signup");
+      } else {
+        await getUser(userlocal);
+        router.push("/chat");
+      }
     })
     .catch((error)=>{
       console.log(error)  
