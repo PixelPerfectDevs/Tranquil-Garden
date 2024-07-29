@@ -68,7 +68,7 @@ export default function SignUp() {
   return (
    <div className="border border-black rounded-md p-8 m-4 mx-12 h-full">
     
-        <TextField label="Name" required id="outlined-size-normal" fullWidth  defaultValue="Forum Shah" sx={{paddingBottom:'14px'}} />
+        <TextField label="Name" required id="outlined-size-normal" fullWidth  defaultValue={name} sx={{paddingBottom:'14px'}} />
         <Typography variant="h5" sx={{paddingTop:'10px'}}>What Interests you the most? </Typography>
         {/* <span>Pick atleast 3</span> */}
         <hr/>
