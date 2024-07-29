@@ -15,4 +15,3 @@ export const GeminiAPIService = async(message)=>{
     }
     return await res.text()
 }
-

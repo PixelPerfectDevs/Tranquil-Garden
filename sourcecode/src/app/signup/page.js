@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useState, useEffect, use } from "react";
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -10,7 +10,8 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { experimentalStyled as styled } from '@mui/material/styles';
+import { useRouter } from 'next/navigation';
+import createUser from "@/Services/newuser";
 const data = [
   {
     name: "music"
@@ -27,6 +28,33 @@ const data = [
 ]
 
 export default function SignUp() {
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [name, setName] = useState("");
+  useEffect(() => {
+    document.body.style.backgroundColor = "white";
+  }, []);
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+      setName(JSON.parse(storedUser).displayName);
+    }
+  }, []);
+  
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+  };
+
+  const handleSubmit = async() => {
+    const newuser = {
+      displayName: name,
+      email: user.email,
+      photoURL: user.photoURL
+    };
+    await createUser(newuser);
+    router.push("/chat");
+  }
   const [list, populateList] = useState([]);
   const handleCardClick = async(card) =>{
     populateList((prevList) => {

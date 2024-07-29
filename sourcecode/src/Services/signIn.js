@@ -10,5 +10,6 @@ export default async function SignInService() {
     const additionalUserInfo = getAdditionalUserInfo(result);
     const isNewUser = additionalUserInfo.isNewUser;
     console.log("user details",user,token)
-    return isNewUser 
+    localStorage.setItem("user", JSON.stringify(user));
+    return isNewUser; 
 }

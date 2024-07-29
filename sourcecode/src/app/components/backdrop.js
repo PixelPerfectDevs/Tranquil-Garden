@@ -4,15 +4,22 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import SignInService from "@/Services/signIn";
+import getUser from "@/Services/getuser";
 export const Backdrop = () => {
   const router = useRouter();
-  const handlesignin = async() => {
-    const newUser = await SignInService()
-    console.log("here ",newUser)
-    // console.log(SignInService())
-    if(newUser){
-      router.push("/signup")
-    }
+  const handlesignin = () => {
+    SignInService().then(async(isNewUser)=>{
+      const userlocal = JSON.parse(localStorage.getItem("user"));
+      if(isNewUser) {
+        router.push("/signup");
+      } else {
+        await getUser(userlocal);
+        router.push("/chat");
+      }
+    })
+    .catch((error)=>{
+      console.log(error)  
+    });
   }
 
   const videoBackground = {
