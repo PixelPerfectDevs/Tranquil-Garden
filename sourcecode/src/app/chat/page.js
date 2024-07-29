@@ -50,8 +50,12 @@ export default class Chat extends React.Component {
             msgtext: "" 
         }));
         setTimeout(async () => {
-            const responseMessage = await GeminiAPIService(currentMsgText);
+            const responseMessage = await GeminiAPIService(currentMsgText,this.state.history);
+            if (!this.state.history[today]) {
+              this.state.history[today] = [];
+            }
             const nextIndex = this.state.history[today].length;
+            
             this.state.history[today][nextIndex] = {
               sent: currentMsgText,
               received: responseMessage
