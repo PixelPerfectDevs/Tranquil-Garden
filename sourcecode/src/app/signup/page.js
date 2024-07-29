@@ -11,8 +11,32 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { experimentalStyled as styled } from '@mui/material/styles';
+const data = [
+  {
+    name: "music"
+  },
+   {
+    name: "painting"
+  },
+  {
+    name: "yoga"
+  },
+  {
+    name: "meditation"
+  },
+]
+
 export default function SignUp() {
-  
+  const [list, populateList] = useState([]);
+  const handleCardClick = async(card) =>{
+    populateList((prevList) => {
+      if (prevList.some(item => item.name === card.name)) {
+        return prevList.filter(item => item.name !== card.name);
+      } else {
+        return [...prevList, card];
+      }
+    });
+  }
   return (
    <div className="border border-black rounded-md p-8 m-4 mx-12 h-full">
     
@@ -22,9 +46,9 @@ export default function SignUp() {
         <hr/>
         <Box sx={{ flexGrow: 1, paddingTop:'20px', paddingBottom:'20px' }} >
       <Grid container spacing={{ xs: 2, md: 3 }} columns={{sm: 4, md: 6 }}   >
-        {Array.from(Array(6)).map((_, index) => (
+        {data.map((card, index) => (
           <Grid item xs={1} sm={2} md={2} key={index} display="flex" justifyContent="center">
-            <Card sx={{ maxWidth: 345 }}>
+            <Card sx={{ maxWidth: 345, border: list.some(item => item.name === card.name) ? '2px solid gray' : 'none' }} onClick={() => handleCardClick(card)}>
       <CardActionArea>
         <CardMedia
           component="img"
@@ -34,7 +58,7 @@ export default function SignUp() {
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            Lizard
+            {card.name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Lizards are a widespread group of squamate reptiles, with over 6,000
@@ -51,7 +75,7 @@ export default function SignUp() {
     <hr/>
     <div className="pt-4 flex justify-between">
         <Button>Skip</Button>
-    <Button variant="outlined"> Submit </Button>
+    <Button variant="outlined" disabled={list.length <3}> Submit </Button>
     </div>
    </div>
   );
