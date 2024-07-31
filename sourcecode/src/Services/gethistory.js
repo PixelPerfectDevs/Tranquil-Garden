@@ -8,8 +8,8 @@ export default async function getHistory(user) {
     if (userDocSnap.exists) {
         const history = userDocSnap.data();
         return history;
-      } else {
-        console.log("No user data found for:", userEmail,"07/27");
+    } else {
+        console.log("No user data found for:", userEmail);
         return null; 
-      }
+    }
 }

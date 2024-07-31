@@ -1,13 +1,15 @@
 import Gemini from "@/app/components/gemini"
-export const GeminiAPIService = async(message)=>{
-    console.log("here in api service",message)
+export const GeminiAPIService = async(message,history)=>{
+    console.log("here in api service",message, history)
+
     const res = await fetch(`/api/gemini`,{
         method:"POST",
         headers: {
             "Content-Type" : "application/json",
         },
         body:JSON.stringify({
-            message:message
+            message:message,
+            chathistory:history
         })
     })
     if (!res.ok) {
