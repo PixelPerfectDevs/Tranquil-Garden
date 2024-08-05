@@ -8,7 +8,7 @@ import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternate
 import getHistory from "@/Services/gethistory";
 import setHistory from "@/Services/sethistory";
 export default class Chat extends React.Component {
-  componentDidMount(){
+  componentDidMount() {
     document.body.style.backgroundColor = "white";
     let today = new Date().toLocaleDateString();
     if (typeof window !== 'undefined') {
@@ -16,8 +16,32 @@ export default class Chat extends React.Component {
       this.setState({ user: storedUser }, async () => {
         if (storedUser) {
           const history = await getHistory(storedUser);
-          this.setState({ history });
-          // console.log("history", history[today]);
+          this.setState({ history }, () => {
+            if (this.state.history && this.state.history[today]) {
+              const mappedMessages = [];
+              Object.keys(this.state.history[today]).forEach(key => {
+                mappedMessages.push({
+                  content: this.state.history[today][key].sent,
+                  type: 'sent'
+                });
+                mappedMessages.push({
+                  content: this.state.history[today][key].received,
+                  type: 'received'
+                });
+              });
+  
+              this.setState({ messages: mappedMessages }, () => {
+                if (this.state.messages.length > 0) {
+                  this.setState({ showResult: true });
+                }
+              });
+            // } else {
+            //   const updatedHistory = { ...this.state.history, [today]: [] };
+            //   this.setState({ history: updatedHistory }, () => {
+            //     setHistory(updatedHistory[today], today, this.state.user);
+            //   });
+            }
+          });
         }
       });
     }
@@ -38,79 +62,53 @@ export default class Chat extends React.Component {
     }
 
     async handleClick() {
-        let today = new Date().toLocaleDateString();
-        const currentMsgText = this.state.msgtext; 
-        this.setState(prevState => ({
-            messages: [
-                ...prevState.messages,
-                { content: prevState.msgtext, type: "sent" }
-            ],
-            showResult: true,
-            loading: true,
-            msgtext: "" 
-        }));
-        setTimeout(async () => {
-            const responseMessage = await GeminiAPIService(currentMsgText,this.state.history);
-            if (!this.state.history[today]) {
-              this.state.history[today] = [];
-            }
-            const nextIndex = this.state.history[today].length;
-            
-            this.state.history[today][nextIndex] = {
-              sent: currentMsgText,
-              received: responseMessage
-            };
-            this.setState({ history: this.state.history }, () => {
+      let today = new Date().toLocaleDateString();
+      const currentMsgText = this.state.msgtext;
+      this.setState(prevState => ({
+          messages: [
+              ...prevState.messages,
+              { content: prevState.msgtext, type: "sent" }
+          ],
+          showResult: true,
+          loading: true,
+          msgtext: ""
+      }));
+      setTimeout(async () => {
+          const responseMessage = await GeminiAPIService(currentMsgText, this.state.history);
+  
+          this.setState(prevState => {
+              const updatedHistory = { ...prevState.history };
+              if (!Array.isArray(updatedHistory[today])) {
+                  updatedHistory[today] = [];
+              }
+  
+              // Now, safely push the new message object to 'today's history
+              updatedHistory[today].push({ sent: currentMsgText, received: responseMessage });
+              console.log("updatedHistory", updatedHistory);
+            console.log("updatedHistory after pop", updatedHistory);
+              return {
+                  messages: [
+                      ...prevState.messages,
+                      { content: responseMessage, type: "received" }
+                  ],
+                  history: updatedHistory,
+                  loading: false,
+              };
+          }, () => {
+              this.state.history[today].pop();
               setHistory(this.state.history[today], today, this.state.user);
-            });
-            this.setState(prevState => ({
-            messages: [
-                ...prevState.messages,
-                { content: responseMessage, type: "received" }
-            ],
-            loading: false,
-            }));
-        }, 2000);
-
-    }
+          });
+      }, 2000); 
+  }
   
     updateInputValue(e) {
         this.setState({
             msgtext: e.target.value
         });
     }
-    componentDidUpdate(prevProps, prevState) {
-      // Check if history has changed to prevent an infinite loop
-      if (this.state.history !== prevState.history) {
-        let today = new Date().toLocaleDateString();
-        if (this.state.history && this.state.history[today]) {
-          // console.log("messages", this.state.messages, this.state.history[today]);
-          const mappedMessages = [];
-          Object.keys(this.state.history[today]).forEach(key => {
-              mappedMessages.push({
-                  content: this.state.history[today][key].sent,
-                  type: 'sent'
-              });
-              mappedMessages.push({
-                content: this.state.history[today][key].received,
-                type: 'received'
-            });
-          });
-    
-          this.setState({ messages: mappedMessages },()=>{
-            if (this.state.messages.length > 0) {
-              this.setState({ showResult: true });
-            }
-          });
-        } else {
-          history[today] = [];
-          setHistory(history[today],today, this.state.user);
-        }
-      }
-    }
     render() {
       const { showResult, loading, user, messages, history } = this.state;
-      // console.log("messages", messages,history);
+      console.log("messages", messages,history);
       return (
         <div className="main">
             <div className="nav">
