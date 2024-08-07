@@ -17,106 +17,214 @@ export default function Chat() {
     const [user, setUser] = useState(null);
     const [history, setHistoryData] = useState(null);
     const [photourl, setPhotourl] = useState(null);
+
+    const updateMessages = async(msgtext,responseMessage)=>{
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { content: msgtext, type: "sent" },
+        { content: responseMessage, type: "received" }
+    ]);
+    const today =  new Date().toLocaleDateString();
+    const newhistory = history
+    if(newhistory[today] == undefined) {
+      newhistory[today] = []
+    }
+    newhistory[today].push({
+      "sent": msgtext,
+      "received": responseMessage
+    }
+    )
+    setHistoryData(newhistory)
+
+    // console.log("new history",newhistory)
+    }
+
     useEffect(() => {
+
+      document.body.style.backgroundColor = "white";
+      document.body.style.overflow = "hidden";
       const storedPhotoUrl = localStorage.getItem('photo');
       if (storedPhotoUrl) {
         setPhotourl(storedPhotoUrl);
       }
-    }, []);
-    useEffect(() => {
-      document.body.style.backgroundColor = "white";
-      document.body.style.overflow = "hidden";
-      const today = new Date().toLocaleDateString();
       if (typeof window !== 'undefined') {
-        const storedUser = JSON.parse(sessionStorage.getItem('user')) || null;
+        
+    
+        const getAllHistory = async ()=>{
+        const storedUser = await JSON.parse(sessionStorage.getItem("user"));
         setUser(storedUser);
-        if (storedUser) {
-          
-          const fetchHistory = async () => {
-            const historyData = await getHistory(storedUser);
-            console.log("historyData", historyData[today]);
-            setHistoryData(historyData);
-            if (historyData && historyData[today]) {
-              const mappedMessages = [];
-              Object.keys(historyData[today]).forEach(key => {
-                if (historyData[today][key].sent) {
-                  mappedMessages.push({
-                    content: historyData[today][key].sent,
-                    type: 'sent',
-                  });
-                }
-                if (historyData[today][key].received) {
-                  mappedMessages.push({
-                    content: historyData[today][key].received,
-                    type: 'received',
-                  });
-                }
-              });
-              console.log("mappedMessages", mappedMessages);
-              if (mappedMessages.length>0) {
-                setShowResult(true);
-              }
-              setMessages(mappedMessages);
-            }
-          };
-          fetchHistory();
+        // console.log("user",user)
+        const userhistory  = await getHistory(storedUser)
+        // console.log("history",userhistory)
+        const today =  new Date().toLocaleDateString();
+        // console.log("today",userhistory[today])
+        if (userhistory){
+          setHistoryData(userhistory)
+          if(userhistory && userhistory[today]){
+          const mappedMessages = [];
+          Object.keys(userhistory[today]).forEach(key => {
+                          if (userhistory[today][key].sent) {
+                            mappedMessages.push({
+                              content: userhistory[today][key].sent,
+                              type: 'sent',
+                            });
+                          }
+                          
+                          if (userhistory[today][key].received) {
+                            mappedMessages.push({
+                              content: userhistory[today][key].received,
+                              type: 'received',
+                            });
+                          }
+                          // console.log("format",mappedMessages)
+                          setMessages(mappedMessages);
+                          setShowResult(true)
+                        });
+                      }
         }
+        }
+      
+        getAllHistory()
+      
       }
-      return () => {
-        document.body.style.overflow = "";
-      };
     }, []);
-    useEffect(() => {
-      console.log("Updated photourl", photourl);
-    }, [photourl]);
-    const handleClick = async () => {
-      setLoading(true);
-      setMsgtext(""); // Assuming msgtext is the state for the input text
-      const today = new Date().toLocaleDateString();
-      const currentMsgText = msgtext;
-  
-      // Immediately add the "sent" message to the messages state
-      setMessages(prevMessages => [
-          ...prevMessages,
-          { content: currentMsgText, type: "sent" }
-      ]);
-  
-      setTimeout(async () => {
-          try {
-              const responseMessage = await GeminiAPIService(currentMsgText, history);
-  
-              // Update history with both sent and received messages
-              setHistoryData(prevHistory => {
-                  const updatedHistory = { ...prevHistory };
-                  if (!Array.isArray(updatedHistory[today])) {
-                      updatedHistory[today] = [];
-                  }
-                  updatedHistory[today].push({ sent: currentMsgText, received: responseMessage });
-                  return updatedHistory;
-              });
-  
-              // Add the "received" message to the messages state
-              setMessages(prevMessages => [
-                  ...prevMessages,
-                  { content: responseMessage, type: "received" }
-              ]);
-  
-              // Correctly update the history using setHistory
-              // Assuming setHistory is designed to accept the history for the current day, the date, and the user
-              const updatedHistoryForToday = history[today] ? [...history[today], { sent: currentMsgText, received: responseMessage }] : [{ sent: currentMsgText, received: responseMessage }];
-              setHistory(updatedHistoryForToday, today, user); // Correctly pass the updated history for today
-          } catch (error) {
-              console.error("Failed to send message:", error);
-          } finally {
-              setLoading(false);
-          }
-      }, 2000);
-      console.log("messages", messages, history[today]);
-  };
 
-    const updateInputValue = (e) => {
-        setMsgtext(e.target.value);
-    };
+    const handleClick = async()=>{
+      setLoading(true);
+      setShowResult(true)
+      const today = new Date().toLocaleDateString();
+      // console.log("message",msgtext)
+      const tempmsg = msgtext
+      setMsgtext("")
+      const responseMessage = await GeminiAPIService(tempmsg, history);
+      await updateMessages(tempmsg,responseMessage)
+      // console.log("messages",messages)
+      await setHistory(history[today],today,user)
+      
+      // console.log("new history",history)
+      // if(history && history[today]){
+        const mappedMessages = [];
+        Object.keys(history[today]).forEach(key => {
+                        if (history[today][key].sent) {
+                          mappedMessages.push({
+                            content: history[today][key].sent,
+                            type: 'sent',
+                          });
+                        }
+                        if (history[today][key].received) {
+                          mappedMessages.push({
+                            content: history[today][key].received,
+                            type: 'received',
+                          });
+                        }
+                        // console.log("format",mappedMessages)
+                        setMessages(mappedMessages);
+                        
+                      });
+  
+    
+      setLoading(false)
+    }
+    const updateInputValue = async(e)=>{
+       setMsgtext(e.target.value)
+    }
+  //   useEffect(() => {
+  //     document.body.style.backgroundColor = "white";
+  //     document.body.style.overflow = "hidden";
+  //     const today = new Date().toLocaleDateString();
+  //     if (typeof window !== 'undefined') {
+  //       const storedUser = JSON.parse(sessionStorage.getItem('user')) || null;
+  //       setUser(storedUser);
+  //       if (storedUser) {
+          
+  //         const fetchHistory = async () => {
+  //           const historyData = await getHistory(storedUser);
+  //           console.log("historyData", historyData[today]);
+  //           setHistoryData(historyData);
+  //           if (historyData && historyData[today]) {
+  //             const mappedMessages = [];
+  //             Object.keys(historyData[today]).forEach(key => {
+  //               if (historyData[today][key].sent) {
+  //                 mappedMessages.push({
+  //                   content: historyData[today][key].sent,
+  //                   type: 'sent',
+  //                 });
+  //               }
+  //               if (historyData[today][key].received) {
+  //                 mappedMessages.push({
+  //                   content: historyData[today][key].received,
+  //                   type: 'received',
+  //                 });
+  //               }
+  //             });
+  //             console.log("mappedMessages", mappedMessages);
+  //             if (mappedMessages.length>0) {
+  //               setShowResult(true);
+  //             }
+  //             setMessages(mappedMessages);
+  //           }
+  //         };
+  //         fetchHistory();
+  //       }
+  //     }
+  //     return () => {
+  //       document.body.style.overflow = "";
+  //     };
+  //   }, []);
+  //   useEffect(() => {
+  //     console.log("Updated photourl", photourl);
+  //   }, [photourl]);
+
+  //   const handleClick = async () => {
+  //     setLoading(true);
+  //     setMsgtext(""); // Assuming msgtext is the state for the input text
+  //     const today = new Date().toLocaleDateString();
+  //     const currentMsgText = msgtext;
+  
+  //     // Immediately add the "sent" message to the messages state
+  //     setMessages(prevMessages => [
+  //         ...prevMessages,
+  //         { content: currentMsgText, type: "sent" }
+  //     ]);
+  
+  //     setTimeout(async () => {
+  //         try {
+  //             const responseMessage = await GeminiAPIService(currentMsgText, history);
+  //             console.log("response",responseMessage)
+  //             // Update history with both sent and received messages
+  //             setHistoryData(prevHistory => {
+  //                 const updatedHistory = { ...prevHistory };
+  //                 if (!Array.isArray(updatedHistory[today])) {
+  //                     updatedHistory[today] = [];
+  //                 }
+  //                 updatedHistory[today].push({ sent: currentMsgText, received: responseMessage });
+  //                 return updatedHistory;
+  //             });
+  
+  //             // Add the "received" message to the messages state
+  //             setMessages(prevMessages => [
+  //                 ...prevMessages,
+  //                 { content: responseMessage, type: "received" }
+  //             ]);
+  
+  //             // Correctly update the history using setHistory
+  //             // Assuming setHistory is designed to accept the history for the current day, the date, and the user
+  //             const updatedHistoryForToday = history[today] ? [...history[today], { sent: currentMsgText, received: responseMessage }] : [{ sent: currentMsgText, received: responseMessage }];
+  //             const updatedHistory = {...history,[today]:updatedHistoryForToday}
+  //             setHistory(updatedHistory, today, user); // Correctly pass the updated history for today
+              
+  //         } catch (error) {
+  //             console.error("Failed to send message:", error);
+  //         } finally {
+  //             setLoading(false);
+  //         }
+  //     }, 2000);
+  //     console.log("messages", messages, history[today]);
+  // };
+
+  //   const updateInputValue = (e) => {
+  //       setMsgtext(e.target.value);
+  //   };
 
     return (
         <div className="main">
