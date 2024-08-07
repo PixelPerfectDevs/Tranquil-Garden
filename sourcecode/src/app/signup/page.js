@@ -21,6 +21,7 @@ import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/icons-material/Info';
 import { useRouter } from 'next/navigation';
 import createUser from "@/Services/newuser";
+import setHistory from "@/Services/sethistory";
 const data = [
   {
     name: "Music"
@@ -68,6 +69,7 @@ export default function SignUp() {
   };
   
   const handleSubmit = async() => {
+    let today = new Date().toLocaleDateString();
     const newuser = {
       displayName: name,
       email: user.email,
@@ -75,6 +77,7 @@ export default function SignUp() {
       interests : list
     };
     await createUser(newuser);
+    setHistory([], today, user);
     router.push("/chat");
   }
   const [list, populateList] = useState([]);
