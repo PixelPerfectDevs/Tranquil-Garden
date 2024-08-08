@@ -245,17 +245,15 @@
   gap: 10px; 
   margin-bottom: 10px;
 }
-
-/* .sent {
-  align-self: flex-start;
-  border-radius: 10px;
-  margin-right: 10px;
-  padding: 5px 10px;
+.managebutton{
+  background-color: #e9eef6;
+  border: 1px solid black;
+  color: #0957d0;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 25px;
+  padding: 5px 20px;
 }
-
-.received {
-  align-self: flex-start;
-  border-radius: 10px;
-  margin-left: 10px;
-  padding: 5px 10px;
-} */
+.managebutton:hover{
+  background-color: #d9e2f4;
+}
