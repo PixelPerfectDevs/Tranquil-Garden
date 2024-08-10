@@ -9,8 +9,11 @@ export const Backdrop = () => {
   const router = useRouter();
   const handlesignin = () => {
     SignInService().then(async(isNewUser)=>{
-      const userlocal = JSON.parse(localStorage.getItem("user"));
-      if(isNewUser) {
+
+      const userlocal = await JSON.parse(localStorage.getItem("user"));
+      console.log("user local ",userlocal)
+      // console.log("response",await getUser(userlocal))
+      if(isNewUser || await getUser(userlocal)==undefined) {
         router.push("/signup");
       } else {
         await getUser(userlocal);

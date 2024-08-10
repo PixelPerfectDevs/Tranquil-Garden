@@ -66,6 +66,7 @@ export default function SignUp() {
   
   const handleNameChange = (event) => {
     setName(event.target.value);
+    // console.log(event.target.value)
   };
   
   const handleSubmit = async() => {
@@ -94,8 +95,9 @@ export default function SignUp() {
   }
   return (
    <div className="border border-black rounded-md p-8 m-4 mx-12 h-full">
-    
-        <TextField label="Name" required id="outlined-size-normal" fullWidth  defaultValue={name} sx={{paddingBottom:'14px'}} />
+    <div>
+        <TextField label="Name" required id="outlined-required" fullWidth onChange={(e)=> handleNameChange(e)}  defaultValue={name} sx={{paddingBottom:'14px'}} />
+        </div>
         <Typography variant="h5" sx={{paddingTop:'10px'}}>What Interests you the most? </Typography>
         <hr/>
         <Box sx={{ flexGrow: 1, paddingTop:'20px', paddingBottom:'20px' }} >

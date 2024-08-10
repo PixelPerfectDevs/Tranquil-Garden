@@ -42,6 +42,8 @@ export async function  POST(request) {
     
     const prompt =data.message
     const result = await chatSession.sendMessage([prompt])
+
+    
     return new Response(result.response.text(),{status:200})
 }
 

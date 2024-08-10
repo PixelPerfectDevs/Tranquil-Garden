@@ -47,6 +47,12 @@ function createData(Name, CreatedOn, Download) {
 }
 
  export default function GetReport() {
+
+  useEffect(() => {
+
+    document.body.style.backgroundColor = "white";
+    document.body.style.overflow = "auto";
+  })
   const router = useRouter();
   const [urlList, setURL] = React.useState([])
   const [username,setusername] = React.useState("")
@@ -128,16 +134,16 @@ function createData(Name, CreatedOn, Download) {
   
     }
   return (
-    <div className="main overflow-y-scroll">
+    <div className="p-4 ">
       <ArrowBackIcon onClick={()=>handleBack()}/>
       
             <div className="m-4">
       <Typography variant="h4">Analysis</Typography>
-      <hr className="border border-2"/>
-      <PieChart data={reportData}/>
+      <hr className="border border-2 mb-4"/>
+      <PieChart data={reportData} />
       {/* adding pie chart for number of positive and negative days */}
       {/*  */}
-      <Typography variant="h4">Reports</Typography>
+      <Typography variant="h4" sx={{marginTop:'10px'}}>Reports</Typography>
       <hr className="border border-2 mb-4"/>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
