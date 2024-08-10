@@ -5,6 +5,7 @@ import Link from "next/link";
 import app from "../../../firebaseconfig";
 import {saveAs} from 'file-saver'
 import { Typography } from "@mui/material";
+import { PieChart } from "../components/chart";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import getHistory from "@/Services/gethistory";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Firebase Storage functions
@@ -49,6 +50,7 @@ function createData(Name, CreatedOn, Download) {
   const router = useRouter();
   const [urlList, setURL] = React.useState([])
   const [username,setusername] = React.useState("")
+  const [reportData, setReportData] = useState({ positiveDays: 10, negativeDays: 5 });
   useEffect(() => {
     const fetchURLs = async () => {
       const userDetails = await JSON.parse(sessionStorage.getItem("user")) || null;
@@ -126,13 +128,15 @@ function createData(Name, CreatedOn, Download) {
   
     }
   return (
-    <div className="main">
+    <div className="main overflow-y-scroll">
       <ArrowBackIcon onClick={()=>handleBack()}/>
       
             <div className="m-4">
       <Typography variant="h4">Analysis</Typography>
       <hr className="border border-2"/>
-      
+      <PieChart data={reportData}/>
+      {/* adding pie chart for number of positive and negative days */}
+      {/*  */}
       <Typography variant="h4">Reports</Typography>
       <hr className="border border-2 mb-4"/>
       <TableContainer component={Paper}>
