@@ -6,7 +6,8 @@ export default async function createUser(user) {
         name: user.displayName,
         email: user.email,
         photo: user.photoURL,
-        interest: user.interests
+        interest: user.interests,
+        urls: []
     };
     const db = getFirestore(app);
     const userRef = doc(db, "userdata", user.email);

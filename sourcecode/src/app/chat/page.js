@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { GeminiAPIService } from "@/Services/geminiAPI";
 import "./chat.css";
+import { auth, provider } from "@/Services/signIn";
+import { signOut } from "firebase/auth";
 import SendIcon from '@mui/icons-material/Send';
 import PersonIcon from '@mui/icons-material/Person';
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
@@ -84,9 +86,10 @@ export default function Chat() {
         
     
         const getAllHistory = async ()=>{
-        const storedUser = await JSON.parse(sessionStorage.getItem("user"));
+        const storedUser = await JSON.parse(sessionStorage.getItem("user")) ||null;
         setUser(storedUser);
         // console.log("user",user)
+        if(storedUser){
         const userhistory  = await getHistory(storedUser)
         // console.log("history",userhistory)
         const today =  new Date().toLocaleDateString();
@@ -115,6 +118,7 @@ export default function Chat() {
                         });
                       }
         }
+      }
         }
       
         getAllHistory()
@@ -162,106 +166,15 @@ export default function Chat() {
        setMsgtext(e.target.value)
     }
     const handleLogout = async()=>{
+      signOut(auth)
+      // sessionStorage.removeItem('user')
+      localStorage.removeItem('user')
       router.push("/")
     }
-  //   useEffect(() => {
-  //     document.body.style.backgroundColor = "white";
-  //     document.body.style.overflow = "hidden";
-  //     const today = new Date().toLocaleDateString();
-  //     if (typeof window !== 'undefined') {
-  //       const storedUser = JSON.parse(sessionStorage.getItem('user')) || null;
-  //       setUser(storedUser);
-  //       if (storedUser) {
-          
-  //         const fetchHistory = async () => {
-  //           const historyData = await getHistory(storedUser);
-  //           console.log("historyData", historyData[today]);
-  //           setHistoryData(historyData);
-  //           if (historyData && historyData[today]) {
-  //             const mappedMessages = [];
-  //             Object.keys(historyData[today]).forEach(key => {
-  //               if (historyData[today][key].sent) {
-  //                 mappedMessages.push({
-  //                   content: historyData[today][key].sent,
-  //                   type: 'sent',
-  //                 });
-  //               }
-  //               if (historyData[today][key].received) {
-  //                 mappedMessages.push({
-  //                   content: historyData[today][key].received,
-  //                   type: 'received',
-  //                 });
-  //               }
-  //             });
-  //             console.log("mappedMessages", mappedMessages);
-  //             if (mappedMessages.length>0) {
-  //               setShowResult(true);
-  //             }
-  //             setMessages(mappedMessages);
-  //           }
-  //         };
-  //         fetchHistory();
-  //       }
-  //     }
-  //     return () => {
-  //       document.body.style.overflow = "";
-  //     };
-  //   }, []);
-  //   useEffect(() => {
-  //     console.log("Updated photourl", photourl);
-  //   }, [photourl]);
 
-  //   const handleClick = async () => {
-  //     setLoading(true);
-  //     setMsgtext(""); // Assuming msgtext is the state for the input text
-  //     const today = new Date().toLocaleDateString();
-  //     const currentMsgText = msgtext;
-  
-  //     // Immediately add the "sent" message to the messages state
-  //     setMessages(prevMessages => [
-  //         ...prevMessages,
-  //         { content: currentMsgText, type: "sent" }
-  //     ]);
-  
-  //     setTimeout(async () => {
-  //         try {
-  //             const responseMessage = await GeminiAPIService(currentMsgText, history);
-  //             console.log("response",responseMessage)
-  //             // Update history with both sent and received messages
-  //             setHistoryData(prevHistory => {
-  //                 const updatedHistory = { ...prevHistory };
-  //                 if (!Array.isArray(updatedHistory[today])) {
-  //                     updatedHistory[today] = [];
-  //                 }
-  //                 updatedHistory[today].push({ sent: currentMsgText, received: responseMessage });
-  //                 return updatedHistory;
-  //             });
-  
-  //             // Add the "received" message to the messages state
-  //             setMessages(prevMessages => [
-  //                 ...prevMessages,
-  //                 { content: responseMessage, type: "received" }
-  //             ]);
-  
-  //             // Correctly update the history using setHistory
-  //             // Assuming setHistory is designed to accept the history for the current day, the date, and the user
-  //             const updatedHistoryForToday = history[today] ? [...history[today], { sent: currentMsgText, received: responseMessage }] : [{ sent: currentMsgText, received: responseMessage }];
-  //             const updatedHistory = {...history,[today]:updatedHistoryForToday}
-  //             setHistory(updatedHistory, today, user); // Correctly pass the updated history for today
-              
-  //         } catch (error) {
-  //             console.error("Failed to send message:", error);
-  //         } finally {
-  //             setLoading(false);
-  //         }
-  //     }, 2000);
-  //     console.log("messages", messages, history[today]);
-  // };
-
-  //   const updateInputValue = (e) => {
-  //       setMsgtext(e.target.value);
-  //   };
-
+    const handleReports = async ()=>{
+      router.push("/report")
+    }
     return (
         <div className="main">
             <div className="nav">
@@ -353,7 +266,11 @@ export default function Chat() {
                       handleCloseUserMenu();
                       if (setting === 'Sign out') {
                         handleLogout();
-                      }}
+                      }
+                      if(setting === 'Reports'){
+                        handleReports()
+                      }
+                    }
                     } style={{ backgroundColor: 'white',
                       borderRadius: index === 0 ? '25px 25px 0 0' : index === settings.length - 1 ? '0 0 25px 25px' : '0',
                       width: '90%',

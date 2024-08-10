@@ -1,8 +1,10 @@
 import app from "../../firebaseconfig";
 import {getAuth, signInWithPopup, GoogleAuthProvider, getAdditionalUserInfo} from "firebase/auth";
+const provider = new GoogleAuthProvider()
+const auth = getAuth(app)
+export {auth, provider}
 export default async function SignInService() {
-    const provider = new GoogleAuthProvider()
-    const auth = getAuth(app)
+  
     const result = await signInWithPopup(auth,provider)
     const user = result.user
     const credential = GoogleAuthProvider.credentialFromResult(result)

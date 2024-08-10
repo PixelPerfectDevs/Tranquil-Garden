@@ -74,7 +74,8 @@ export default function SignUp() {
       displayName: name,
       email: user.email,
       photoURL: user.photoURL,
-      interests : list
+      interests : list, 
+      urls: []
     };
     await createUser(newuser);
     setHistory([], today, user);
