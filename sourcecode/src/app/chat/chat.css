@@ -257,3 +257,15 @@
 .managebutton:hover{
   background-color: #d9e2f4;
 }
+.menuitem {
+  background-color: white;
+  border-radius: 0; /* This will be overridden inline for first and last items */
+  width: 90%;
+  margin-bottom: 2px; /* This will be overridden inline for the last item */
+  padding: 15px;
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+.menuitem:hover {
+  background-color: #f0f0f0; /* Light grey color on hover */
+}
