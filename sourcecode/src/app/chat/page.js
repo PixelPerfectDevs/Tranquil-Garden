@@ -160,7 +160,7 @@ export default function Chat() {
                                 ) : (
                                     <PersonIcon />
                                 )}
-                                <p className="message-content">{message.content}</p>
+                                <p className="message-content" dangerouslySetInnerHTML={{ __html: formatMessageContent(message.content) }}></p>
                             </div>
                         ))}
                         {loading && (
@@ -194,4 +194,11 @@ export default function Chat() {
             </div>
         </div>
     );
+}
+function formatMessageContent(content) {
+  let formattedContent = content
+      .replace(/\*\*/g, '') // Removes markdown bold, replace with <b></b> tags if desired
+      .replace(/\*/g, '<li>') // Converts * to <li> for bullet points
+      .replace(/\n/g, '<br>'); // Converts new lines to <br> for HTML rendering
+  return formattedContent;
 }
