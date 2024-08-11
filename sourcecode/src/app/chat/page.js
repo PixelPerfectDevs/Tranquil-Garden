@@ -20,6 +20,12 @@ export default function Chat() {
     const [email, setEmail] = useState("");
     const settings = ['Reports', 'History', 'Sign out'];
     const router = useRouter();
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+          const storedUser = JSON.parse(sessionStorage.getItem("user")) || null;
+          setUser(storedUser);
+      }
+  }, []);
     const updateMessages = async(msgtext,responseMessage)=>{
       setMessages(prevMessages => [
         ...prevMessages,
@@ -45,6 +51,7 @@ export default function Chat() {
       document.body.style.overflow = "hidden";
       const storedPhotoUrl = localStorage.getItem('photo');
       const storedUser = JSON.parse(localStorage.getItem('user'));
+      
       if (storedPhotoUrl) {
         setPhotourl(storedPhotoUrl);
       }
@@ -56,7 +63,7 @@ export default function Chat() {
     
         const getAllHistory = async ()=>{
         const storedUser = await JSON.parse(sessionStorage.getItem("user")) ||null;
-        setUser(storedUser);
+        // setUser(storedUser);
         // console.log("user",user)
         if(storedUser){
         const userhistory  = await getHistory(storedUser)
@@ -102,7 +109,8 @@ export default function Chat() {
       // console.log("message",msgtext)
       const tempmsg = msgtext
       setMsgtext("")
-      const responseMessage = await GeminiAPIService(tempmsg, history);
+      
+      const responseMessage = await GeminiAPIService(tempmsg, history,user);
       await updateMessages(tempmsg,responseMessage)
       // console.log("messages",messages)
       await setHistory(history[today],today,user)

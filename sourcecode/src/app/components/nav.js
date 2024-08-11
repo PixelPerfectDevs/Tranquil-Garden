@@ -115,6 +115,9 @@ export default function Nav({settings})  {
                       if(setting === 'Chat'){
                         handleChat()
                       }
+                      if(setting === 'History'){
+                        window.alert("Yet to be implemented")
+                      }
                     }
                     }
                     className="menuitem" 
