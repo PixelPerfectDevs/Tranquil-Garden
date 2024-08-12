@@ -39,7 +39,7 @@ export default function Nav({settings})  {
     const [originalName, setOriginalName] = useState(user ? user.name : '');
     const [interest, setInterest] = useState(user ? user.interest : []);
     const [originalInterest, setOriginalInterest] = useState(user ? user.interest : []);
-    const interestOptions = ['Music', 'Painting', 'Yoga', 'Meditation','Dance','Zumba','Gym','Books']; 
+    const interestOptions = ['Music', 'Painting', 'Yoga','Dance','Gym','Books', 'Sports', 'Movies']; 
     const handleToggle = (value) => {
         const currentIndex = interest.indexOf(value);
         const newInterest = [...interest];

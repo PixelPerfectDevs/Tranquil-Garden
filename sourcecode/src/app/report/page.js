@@ -117,8 +117,8 @@ function createData(Name, CreatedOn, Download) {
   const rows = urlList.map((item,index)=> createData(<Link className="cursor-pointer"  href={item.url} target="_blank"> <PictureAsPdfIcon/> {username} Report {index+1}</Link>,item.date, <DownloadIcon key={index} onClick={() => handleDownload(item.url,`${username} Report ${index+1}`)}/>))
     const handleGetReport = async() =>{
  
-        console.log("report here")
-        window.alert("report")
+        // console.log("report here")
+        // window.alert("report")
         const doc = new jsPDF()
         
         const storedUser =  JSON.parse(localStorage.getItem("user"))
@@ -209,7 +209,9 @@ function createData(Name, CreatedOn, Download) {
       </Table>
     </TableContainer>
     </div>
-
+    <div className="flex justify-center">
+          <footer className="fixed bottom-0 flex justify-center" > <Typography variant="subtitle2"> Gemini may display inaccurate info/analysis, so double-check its responses</Typography>  </footer>
+    </div>
     </div>
   );
 }
