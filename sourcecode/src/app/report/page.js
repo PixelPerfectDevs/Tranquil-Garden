@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import Link from "next/link";
+import Nav from "../components/nav";
 import app from "../../../firebaseconfig";
 import {saveAs} from 'file-saver'
 import { Typography } from "@mui/material";
@@ -162,9 +163,8 @@ function createData(Name, CreatedOn, Download) {
   
     }
   return (
-    <div className="p-4 ">
-      <ArrowBackIcon onClick={()=>handleBack()}/>
-      
+    <div className="main">
+      <Nav settings={['Chat','History','Sign out']}/>
             <div className="m-4">
       <Typography variant="h4">Analysis</Typography>
       <hr className="border border-2 mb-4"/>
@@ -209,6 +209,7 @@ function createData(Name, CreatedOn, Download) {
       </Table>
     </TableContainer>
     </div>
+
     </div>
   );
 }
