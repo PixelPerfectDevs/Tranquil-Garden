@@ -2,11 +2,26 @@ import { ParallaxBanner } from "react-scroll-parallax";
 import { Button } from "@mui/material";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import SignInService from "@/Services/signIn";
 import getUser from "@/Services/getuser";
+import Info from "./info";
 export const Backdrop = () => {
   const router = useRouter();
+  const [showHelloWorld, setShowHelloWorld] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      const position = window.pageYOffset;
+      setShowHelloWorld(position > 500); // Show "Hello World" when scrolled more than 500px
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   const handlesignin = () => {
     SignInService().then(async(isNewUser)=>{
 
@@ -83,10 +98,15 @@ export const Backdrop = () => {
   };
 
   return (
-    <ParallaxBanner
-      layers={[videoBackground, gradientOverlay, headline]}
-      className="full"
-      style={{ height: '100%' }} 
-    />
+    <>
+      <ParallaxBanner
+        layers={[videoBackground, gradientOverlay, headline]}
+        className="full"
+        style={{ height: '100%' }} 
+      />
+      {showHelloWorld && (
+        <Info/>
+      )}
+    </>
   );
 };

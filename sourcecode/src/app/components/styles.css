@@ -91,3 +91,12 @@ body {
 		top: 60px;
 	}
 }
+.page-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure .center.full takes full width if not already set */
+.center.full {
+  width: 100%;
+}
