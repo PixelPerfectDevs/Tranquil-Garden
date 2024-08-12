@@ -10,6 +10,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import getHistory from "@/Services/gethistory";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Firebase Storage functions
 import { getGeminiReportService } from "@/Services/geminiReport";
+import { sentimentCountService } from "@/Services/sentimentCount";
 import Table from '@mui/material/Table';
 import DownloadIcon from '@mui/icons-material/Download';
 import { styled } from '@mui/material/styles';
@@ -53,10 +54,35 @@ function createData(Name, CreatedOn, Download) {
     document.body.style.backgroundColor = "white";
     document.body.style.overflow = "auto";
   })
+
+
   const router = useRouter();
   const [urlList, setURL] = React.useState([])
+  const [sentiment, setSentiment] = React.useState([])
   const [username,setusername] = React.useState("")
-  const [reportData, setReportData] = useState({ positiveDays: 10, negativeDays: 5 });
+  const [reportData, setReportData] = useState({ positiveDays: parseInt(sentiment[0]), negativeDays: parseInt(sentiment[1]) });
+  const fetchSentiment = async () => {
+    const storedUser =  JSON.parse(localStorage.getItem("user"))
+    const history = await getHistory(storedUser)
+    const days = await sentimentCountService(history)
+    const temp = days.split(',')
+    console.log("got it days---> ",temp)
+    if(temp.length === 2){
+    setReportData({positiveDays: parseInt(temp[0]), negativeDays: parseInt(temp[1])})
+    setSentiment(temp)
+    console.log("git this-",sentiment)
+    }
+    else{
+      setReportData(null)
+      setSentiment(temp)
+    }
+  };
+  useEffect(()=>{
+   
+    fetchSentiment();
+  }, [])
+  
+
   useEffect(() => {
     const fetchURLs = async () => {
       const userDetails = await JSON.parse(sessionStorage.getItem("user")) || null;
@@ -99,7 +125,9 @@ function createData(Name, CreatedOn, Download) {
         const history = await getHistory(storedUser)
 
         const response = await getGeminiReportService(history)
-
+        // console.log("response ",tempResponse)
+        
+         
         doc.setFontSize(10)
         const pageHeight = doc.internal.pageSize.getHeight()
         const pageWidth = doc.internal.pageSize.getWidth()
@@ -140,7 +168,12 @@ function createData(Name, CreatedOn, Download) {
             <div className="m-4">
       <Typography variant="h4">Analysis</Typography>
       <hr className="border border-2 mb-4"/>
+      {reportData? 
+      
       <PieChart data={reportData} />
+      : 
+      <Typography variant="h6">We were unable to analyse your data at this moment! Please try again later!</Typography>
+ }
       {/* adding pie chart for number of positive and negative days */}
       {/*  */}
       <Typography variant="h4" sx={{marginTop:'10px'}}>Reports</Typography>

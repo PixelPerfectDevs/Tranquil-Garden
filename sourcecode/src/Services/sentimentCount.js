@@ -1,13 +1,13 @@
-export const getGeminiReportService = async(history)=>{
-    console.log("here in api service",history)
+export const sentimentCountService = async(history)=>{
+    // console.log("here in api service",history)
 
-    const res = await fetch(`/api/report`,{
+    const res = await fetch(`/api/sentiment`,{
         method:"POST",
         headers: {
             "Content-Type" : "application/json",
         },
         body:JSON.stringify({
-            message:"based on the past conversations of the user generate a report analyzing the users good and bad days",
+            message:"based on the past conversations of the user give me number of negative and positive days",
             chathistory:history
         })
     })
