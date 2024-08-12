@@ -5,9 +5,10 @@ import "./styles.css";
 
 export default function HomePage() {
   return (
-    <ParallaxProvider>
+    <>
+      <ParallaxProvider>
         <Backdrop />
-    </ParallaxProvider>
-
+      </ParallaxProvider>
+    </>
   );
 }
