@@ -11,9 +11,20 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Divider from '@mui/material/Divider';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import Checkbox from '@mui/material/Checkbox';
+import ArrowForwardIos from '@mui/icons-material/ArrowForwardIos';
 import { useRouter } from 'next/navigation';
 import { auth, provider } from "@/Services/signIn";
 import { signOut } from "firebase/auth";
+import setUserData from "@/Services/setuserdata";
 import "../chat/chat.css";
 
 export default function Nav({settings})  {
@@ -24,11 +35,28 @@ export default function Nav({settings})  {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [dialogopen, setdialogOpen] = React.useState(false);
     const [view, setView] = useState('buttons');
+    const [name, setName] = useState(user ? user.name : '');
+    const [originalName, setOriginalName] = useState(user ? user.name : '');
+    const [interest, setInterest] = useState(user ? user.interest : []);
+    const [originalInterest, setOriginalInterest] = useState(user ? user.interest : []);
+    const interestOptions = ['Music', 'Painting', 'Yoga', 'Meditation','Dance','Zumba','Gym','Books']; 
+    const handleToggle = (value) => {
+        const currentIndex = interest.indexOf(value);
+        const newInterest = [...interest];
+    
+        if (currentIndex === -1) {
+          newInterest.push(value);
+        } else {
+          newInterest.splice(currentIndex, 1);
+        }
+    
+        setInterest(newInterest);
+      };
     useEffect(() => {
         document.body.style.backgroundColor = "white";
         document.body.style.overflow = "hidden";
         const storedPhotoUrl = localStorage.getItem('photo');
-        const storedUser = JSON.parse(localStorage.getItem('user'));
+        const storedUser = JSON.parse(localStorage.getItem('user'));  
         if (storedPhotoUrl) {
           setPhotourl(storedPhotoUrl);
         }
@@ -38,11 +66,18 @@ export default function Nav({settings})  {
         if (typeof window !== 'undefined') {
             const storedUser = JSON.parse(sessionStorage.getItem("user")) ||null;
             setUser(storedUser);
+            setName(storedUser.name);
+            setOriginalName(storedUser.name);
+            setInterest(storedUser.interest);
+            setOriginalInterest(storedUser.interest);
         }
     }, []);
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
+    const handleInterestChange = (event) => {
+        setInterest(event.target.value);
+      };
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
@@ -56,14 +91,36 @@ export default function Nav({settings})  {
         signOut(auth)
         localStorage.removeItem('user')
         router.push("/")
-      }
-  
+    }
+    const handleNameChange = (event) => {
+    setName(event.target.value);
+    };
     const handleReports = async ()=>{
         router.push("/report")
     }
     const handleChat = async ()=>{
         router.push("/chat")
     }
+    const handleUpdate = async() => {
+        console.log("fromupdate",name,interest)
+        const updatedUserData = { email, name, interest };
+        await setUserData(updatedUserData); // This will trigger a re-render if userData is used in the component
+      
+        setName(name);
+        setOriginalName(name);
+        setInterest(interest);
+        setOriginalInterest(interest);
+        setView('buttons');
+        let userData = JSON.parse(sessionStorage.getItem("user"));
+  
+        // Update the name and interests
+        userData.name = name;
+        userData.interest = interest; // Assuming 'interest' is an array of interests
+        setUser(userData);
+        // Save the updated user data back to sessionStorage
+        sessionStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("user", JSON.stringify(userData));
+      };
     return (
         <div>
             <div className="nav">
@@ -171,28 +228,105 @@ export default function Nav({settings})  {
                 <div style={{ padding: '15px', width: '60%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' 
                  }}>
                  {view === 'buttons' ? (
-                  <>
-                    <Button sx={{color: 'black', border: '1px solid black', width: '100%'}} onClick={() => setView('name')}>Name {user ? user.name : 'Guest'}</Button>
-                    <Button sx ={{color: 'black', border: '1px solid black', width: '100%'}} onClick={() => setView('preferences')}>Preferences</Button>
-                  </>
+                 <>
+                 <Card sx={{width: '100%', border: '1px solid #d3d3d3', borderRadius: '10px'}}>
+                   <CardContent>
+                     <div>
+                       <Button sx={{ width: '100%', color: 'black' }} endIcon={<ArrowForwardIos />} onClick={() => setView('name')}>
+                         <Grid container alignItems="center" justifyContent="space-between">
+                           <Grid item xs={4}>
+                             <Typography sx={{ textAlign: 'left' }}>Name</Typography>
+                           </Grid>
+                           <Grid item xs sx={{textAlign: 'left'}}>
+                             <Typography>{user ? user.name : 'guest'}</Typography>
+                           </Grid>
+                           <Grid item xs={3} sx={{ visibility: 'hidden' }}>
+                             <Typography>Placeholder</Typography>
+                           </Grid>
+                         </Grid>
+                       </Button>
+                       <Divider sx={{ my: 1 }} />
+                       <Button sx={{ width: '100%', color: 'black' }} endIcon={<ArrowForwardIos />} onClick={() => setView('preferences')}>
+                         <Grid container alignItems="center" justifyContent="space-between" >
+                           <Grid item xs={4}>
+                             <Typography sx={{ textAlign: 'left' }}>Preferences</Typography>
+                           </Grid>
+                           <Grid item xs sx={{textAlign: 'left'}}>
+                             {user && Array.isArray(user.interest) ? (
+                               user.interest.map((interest, index) => (
+                                 <Typography key={index}>{interest}</Typography>
+                               ))
+                             ) : (
+                               <Typography>No preferences</Typography>
+                             )}
+                           </Grid>
+                           <Grid item xs={3} sx={{ visibility: 'hidden' }}>
+                             <Typography>Placeholder</Typography>
+                           </Grid>
+                         </Grid>
+                       </Button>
+                     </div>
+                   </CardContent>
+                 </Card>
+               </>
                 ) : view === 'name' ? (
                   <>
-                    <input type="text" placeholder="Name" autoFocus />
-                    <Button onClick={() => setView('buttons')}>Back</Button> 
+                   <Card sx={{width: '100%', border: '1px solid #d3d3d3', borderRadius: '10px'}}>
+                   <CardContent>
+                     <Typography>Edit this to change the name </Typography>
+                     <TextField sx={{marginTop: '20px'}} fullWidth label="Name" id="fullWidth" value={name} onChange={handleNameChange} />
+                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                        {name !== originalName ? (
+                        <>
+                            <Button onClick={() => setView('buttons')}>Cancel</Button>
+                            <Button onClick={handleUpdate}>Update</Button>
+                        </>
+                        ) : (
+                        <Button onClick={() => setView('buttons')}>Back</Button>
+                        )}
+                    </div>
+                    </CardContent>
+                    </Card>
                   </>
                 ) : (
-                  <>
-                    <div>Preferences content</div>
-                    <Button onClick={() => setView('buttons')}>Back</Button> 
-                  </>
+                    <>
+                    <Card sx={{width: '100%', border: '1px solid #d3d3d3', borderRadius: '10px'}}>
+                    <CardContent>
+                      <Typography>View or make changes to preferences</Typography>
+                      <FormGroup>
+                        {interestOptions.map((option) => (
+                            <FormControlLabel
+                            key={option}
+                            control={
+                                <Checkbox
+                                checked={interest.includes(option)}
+                                onChange={() => handleToggle(option)}
+                                name={option}
+                                />
+                            }
+                            label={option}
+                            />
+                        ))}
+                        </FormGroup>
+                      
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                         {!arraysEqual(interest,originalInterest) ? (
+                         <>
+                             <Button onClick={() => setView('buttons')}>Cancel</Button>
+                             <Button onClick={handleUpdate}>Update</Button>
+                         </>
+                         ) : (
+                         <Button onClick={() => setView('buttons')}>Back</Button>
+                         )}
+                     </div>
+                     </CardContent>
+                     </Card>
+                   </>
                 )}
                 </div>
               </div>
               </DialogContent>
               <DialogActions>
-                <Button onClick={handleDialogClose} color="primary">
-                  Cancel
-                </Button>
                 <Button onClick={handleDialogClose} color="primary">
                   Done
                 </Button>
@@ -201,3 +335,16 @@ export default function Nav({settings})  {
         </div>
     );
 }
+function arraysEqual(a, b) {
+    if (a === b) return true; // if both are the same reference
+    if (a == null || b == null) return false; // if either is null, they're not equal
+    if (a.length !== b.length) return false; // different lengths, not equal
+  
+    // Sort and then check if every element is equal
+    const sortedA = [...a].sort();
+    const sortedB = [...b].sort();
+    for (let i = 0; i < sortedA.length; i++) {
+      if (sortedA[i] !== sortedB[i]) return false;
+    }
+    return true;
+  }
