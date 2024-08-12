@@ -168,15 +168,22 @@ function createData(Name, CreatedOn, Download) {
             <div className="m-4">
       <Typography variant="h4">Analysis</Typography>
       <hr className="border border-2 mb-4"/>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
       {reportData? 
-      
+     
       <PieChart data={reportData} />
+    
       : 
       <Typography variant="h6">We were unable to analyse your data at this moment! Please try again later!</Typography>
  }
+ </div>
       {/* adding pie chart for number of positive and negative days */}
       {/*  */}
+      <div className="flex justify-between mt-2">
       <Typography variant="h4" sx={{marginTop:'10px'}}>Reports</Typography>
+           
+      <button className="border p-2 rounded-md border-black mb-4 " onClick={()=>handleGetReport()}>Generate Report</button>
+      </div>
       <hr className="border border-2 mb-4"/>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -201,8 +208,6 @@ function createData(Name, CreatedOn, Download) {
         </TableBody>
       </Table>
     </TableContainer>
-      
-      <button className="border p-2 rounded-md border-black mt-4" onClick={()=>handleGetReport()}>Get Report</button>
     </div>
     </div>
   );
